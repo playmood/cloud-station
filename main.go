@@ -13,6 +13,7 @@ var (
 	secretKey  = os.Getenv("ALI_SK")
 	bucketName = os.Getenv("ALI_BUCKET_NAME")
 	uploadFile = ""
+	help       = false
 )
 
 // 实现文件上传
@@ -43,8 +44,22 @@ func validate() error {
 }
 
 func loadParams() {
+	flag.BoolVar(&help, "h", false, "help")
 	flag.StringVar(&uploadFile, "f", "", "give the name of upload file")
 	flag.Parse()
+
+	if help {
+		usage()
+	}
+}
+
+// 打印使用说明
+func usage() {
+	fmt.Fprintf(os.Stderr, `cloud-station version: 0.0.1
+Usage: cloud-station [-h] -f <uplaod_file_path>
+Options:
+`)
+	flag.PrintDefaults()
 }
 
 func main() {
@@ -53,6 +68,7 @@ func main() {
 
 	if err := validate(); err != nil {
 		fmt.Println(err)
+		usage()
 		os.Exit(1)
 	}
 	if err := upload(uploadFile); err != nil {
