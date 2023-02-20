@@ -34,12 +34,14 @@ func TestBucketList(t *testing.T) {
 
 // 测试上传
 func TestUploadFile(t *testing.T) {
-	bucket, err := client.Bucket("my-bucket")
+	bucket, err := client.Bucket(BucketName)
 	if err != nil {
 		t.Log(err)
 	}
 
-	err = bucket.PutObjectFromFile("my-object", "LocalFile")
+	// objectKey 上传到bucket里面的对象的名称
+	// 把当前文件上传到mydir/test.go中
+	err = bucket.PutObjectFromFile("mydir/test.go", "oss_test.go")
 	if err != nil {
 		t.Log(err)
 	}
@@ -47,7 +49,6 @@ func TestUploadFile(t *testing.T) {
 
 // 初始化一个OSS Client，等下给所有测试用例使用
 func init() {
-
 	c, err := oss.New(OssEndpoint, AccessKey, AccessSecret)
 	if err != nil {
 		panic(err)
