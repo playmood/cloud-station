@@ -13,9 +13,6 @@ var (
 )
 
 var (
-	endPoint   = os.Getenv("ALI_OSS_ENDPOINT")
-	accessKey  = os.Getenv("ALI_AK")
-	secretKey  = os.Getenv("ALI_SK")
 	bucketName = os.Getenv("ALI_BUCKET_NAME")
 )
 
@@ -41,7 +38,7 @@ func TestUploadError(t *testing.T) {
 
 // uploader实例化逻辑
 func init() {
-	ali, err := aliyun.NewAliOssStore(endPoint, accessKey, secretKey)
+	ali, err := aliyun.NewDefaultAliOssStore()
 	if err != nil {
 		panic(err)
 	}

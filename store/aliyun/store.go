@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/playmood/cloud-station/store"
+	"os"
 )
 
 var (
@@ -11,9 +12,36 @@ var (
 	_ store.Uploader = &AliOssStore{}
 )
 
+type Options struct {
+	Endpoint     string
+	AccessKey    string
+	AccessSecret string
+}
+
+func (o *Options) Validate() error {
+	if o.Endpoint == "" || o.AccessKey == "" || o.AccessSecret == "" {
+		return fmt.Errorf("endpoint, access_key secret_key is empty")
+	}
+	return nil
+}
+
+func NewDefaultAliOssStore() (*AliOssStore, error) {
+	endPoint := os.Getenv("ALI_OSS_ENDPOINT")
+	accessKey := os.Getenv("ALI_AK")
+	secretKey := os.Getenv("ALI_SK")
+	return NewAliOssStore(&Options{
+		Endpoint:     endPoint,
+		AccessKey:    accessKey,
+		AccessSecret: secretKey,
+	})
+}
+
 // 构造函数
-func NewAliOssStore(endpoint, accessKey, accessSecret string) (*AliOssStore, error) {
-	c, err := oss.New(endpoint, accessKey, accessSecret)
+func NewAliOssStore(opts *Options) (*AliOssStore, error) {
+	if err := opts.Validate(); err != nil {
+		return nil, err
+	}
+	c, err := oss.New(opts.Endpoint, opts.AccessKey, opts.AccessSecret)
 	if err != nil {
 		return nil, err
 	}
