@@ -30,7 +30,16 @@ func upload(filePath string) error {
 		return err
 	}
 	// 上传文件文件到bucket
-	return bucket.PutObjectFromFile(filePath, filePath)
+	if err := bucket.PutObjectFromFile(filePath, filePath); err != nil {
+		return err
+	}
+	// 打印下载链接
+	downloadURL, err := bucket.SignURL(filePath, oss.HTTPGet, 60*60*24)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("download URL for one day: %s\n", downloadURL)
+	return nil
 }
 
 func validate() error {
