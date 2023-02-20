@@ -59,6 +59,7 @@ func loadParams() {
 
 	if help {
 		usage()
+		os.Exit(0)
 	}
 }
 
