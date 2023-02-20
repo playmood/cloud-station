@@ -11,14 +11,8 @@ var (
 )
 
 // 构造函数
-func NewAwsOssStore(endpoint, accessKey, accessSecret string) (*TxOssStore, error) {
-	c, err := oss.New(endpoint, accessKey, accessSecret)
-	if err != nil {
-		return nil, err
-	}
-	return &TxOssStore{
-		client: c,
-	}, nil
+func NewAwsOssStore() *TxOssStore {
+	return &TxOssStore{}
 }
 
 type TxOssStore struct {
