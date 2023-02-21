@@ -9,7 +9,7 @@ import (
 
 var (
 	// 对象是否实现接口的强制约束
-	_ store.Uploader = &AliOssStore{}
+	_ store.Uploader = (*AliOssStore)(nil)
 )
 
 type Options struct {
@@ -46,12 +46,15 @@ func NewAliOssStore(opts *Options) (*AliOssStore, error) {
 		return nil, err
 	}
 	return &AliOssStore{
-		client: c,
+		client:   c,
+		listener: NewDefaultProgressListener(),
 	}, nil
 }
 
 type AliOssStore struct {
 	client *oss.Client
+	// 依赖listener的实现
+	listener oss.ProgressListener
 }
 
 func (s *AliOssStore) Upload(bucketName string, objectKey string, fileName string) error {
@@ -61,7 +64,7 @@ func (s *AliOssStore) Upload(bucketName string, objectKey string, fileName strin
 		return err
 	}
 	// 上传文件文件到bucket
-	if err := bucket.PutObjectFromFile(objectKey, fileName); err != nil {
+	if err := bucket.PutObjectFromFile(objectKey, fileName, oss.Progress(s.listener)); err != nil {
 		return err
 	}
 	// 打印下载链接
