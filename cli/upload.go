@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/playmood/cloud-station/store"
 	"github.com/playmood/cloud-station/store/aliyun"
 	"github.com/playmood/cloud-station/store/aws"
@@ -16,11 +17,6 @@ var (
 	ossAccessSecret string
 	ossBucketName   string
 	uploadFile      string
-)
-
-const (
-	default_ak = "xx"
-	default_sk = "xxx"
 )
 
 var UploadCmd = &cobra.Command{
@@ -57,10 +53,14 @@ var UploadCmd = &cobra.Command{
 
 func setAliDefault(opts *aliyun.Options) {
 	if opts.AccessKey == "" {
-		opts.AccessKey = default_ak
+		fmt.Printf("请输入access key: ")
+		fmt.Scanln(&opts.AccessKey)
 	}
 	if opts.AccessSecret == "" {
-		opts.AccessSecret = default_sk
+		prompt := &survey.Password{
+			Message: "请输入access secret: ",
+		}
+		survey.AskOne(prompt, &opts.AccessSecret)
 	}
 }
 
